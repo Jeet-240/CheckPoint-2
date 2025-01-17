@@ -1,3 +1,4 @@
+import 'package:firebase_app/constants/routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_app/widgets/custom_button.dart';
@@ -82,8 +83,6 @@ class _LoginViewState extends State<LoginView> {
               onPressed: () async {
                 final email = _email.text;
                 final password = _password.text;
-                print(email.trim());
-                print(password.trim());
                 await FirebaseAuth.instance.signOut();
                 try {
                   final userCredential = await FirebaseAuth.instance
@@ -93,26 +92,21 @@ class _LoginViewState extends State<LoginView> {
                   );
                   final user =  FirebaseAuth.instance.currentUser;
                     if (user != null) {
-                      print("Logged in as ${user.email}");
                       final isEmailVerified = user?.emailVerified ?? false;
                       if(!isEmailVerified){
                         Navigator.of(context).pushNamedAndRemoveUntil(
-                            "/verify/", (route)=>false);
+                            verifyRoute, (route)=>false);
                       }else{
                         Navigator.of(context).pushNamedAndRemoveUntil(
-                            '/home/',(route)=>false);
+                            mainRoute,(route)=>false);
                       }
                     }
-                    else {
-                    print("Not logged in");
-                  }
-                  print(userCredential);
                 }
                 on FirebaseAuthException catch (e) {
                   if (e.code == 'user-not-found') {
-                    print('USER NOT FOUND');
+
                   } else if (e.code == 'wrong-password') {
-                    print('Entered Wrong Password');
+
                   }
                 }
               },
@@ -121,7 +115,7 @@ class _LoginViewState extends State<LoginView> {
             CustomButton(
               onPressed: () {
                   Navigator.of(context).pushNamedAndRemoveUntil(
-                      '/register/', (route)=>false
+                     registerRoute, (route)=>false
                   );
               },
               text: 'Not registered yet? Register Here!!',

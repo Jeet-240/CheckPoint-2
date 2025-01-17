@@ -1,3 +1,4 @@
+import 'package:firebase_app/constants/routes.dart';
 import 'package:firebase_app/views/login_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -31,9 +32,8 @@ class MainView extends StatelessWidget {
                       final shouldLogout = await showLogOutDialog(context);
                       if(shouldLogout){
                         await FirebaseAuth.instance.signOut();
-                        Navigator.of(context).pushNamedAndRemoveUntil('/login/', (route)=>false);
-                      }
-                      break;
+                        Navigator.of(context).pushNamedAndRemoveUntil(loginRoute, (route)=>false);
+                      }break;
                   }
 
                 },
@@ -56,23 +56,46 @@ class MainView extends StatelessWidget {
 }
 
 
-
 Future<bool> showLogOutDialog(BuildContext context){
   return showDialog<bool>(context: context, builder: (context){
     return AlertDialog(
+      backgroundColor: Colors.redAccent,
       title: const Text('Sign Out'),
-      content: const Text('Are you sure you want to sign out?'),
+      content: const Text(
+          'Are you sure you want to sign out?',
+          style: TextStyle(
+            fontWeight:  FontWeight.w700,
+            color: Colors.white,
+            fontFamily: 'Roboto',
+          )
+      ),
       actions: [
         TextButton(
+          style: ButtonStyle(
+          ),
             onPressed: (){
               Navigator.of(context).pop(false);
             },
-            child: const Text('Cancel'),
+            child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  fontWeight:  FontWeight.w700,
+                  color: Colors.white,
+                  fontFamily: 'Roboto',
+                )
+            ),
         ),
         TextButton(onPressed: (){
           Navigator.of(context).pop(true);
         },
-            child: const Text('Logout'),
+            child: const Text(
+                'Logout',
+                style: TextStyle(
+                  fontWeight:  FontWeight.w700,
+                  color: Colors.white,
+                  fontFamily: 'Roboto',
+                )
+            ),
         )
       ],
     );

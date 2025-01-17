@@ -1,8 +1,11 @@
+import 'package:firebase_app/constants/routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_app/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import '../firebase_options.dart';
+import '../constants/routes.dart';
+
 
 
 
@@ -93,12 +96,11 @@ class _RegisterViewState extends State<RegisterView> {
                         email: email,
                         password: password
                     );
-                    Navigator.of(context).pushNamedAndRemoveUntil('/verify/', (route)=>false);
+                    Navigator.of(context).pushNamedAndRemoveUntil(verifyRoute, (route)=>false);
                   } on FirebaseAuthException catch(e){
-                    print("niggA + ${e.code}");
                     if(e.code == 'email-already-in-use'){
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                          "/login/"
+                          loginRoute
                           , (route) => false);
                     }
                   }
@@ -107,7 +109,7 @@ class _RegisterViewState extends State<RegisterView> {
             CustomButton(
                 onPressed: (){
                   Navigator.of(context).pushNamedAndRemoveUntil(
-                      "/login/"
+                     loginRoute
                       , (route) => false);
                 },
                 text: 'Álready have an account? Login',
