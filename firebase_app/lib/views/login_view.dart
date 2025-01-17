@@ -1,4 +1,5 @@
 import 'package:firebase_app/constants/routes.dart';
+import 'package:firebase_app/widgets/custom_dialogbox.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_app/widgets/custom_button.dart';
@@ -83,6 +84,14 @@ class _LoginViewState extends State<LoginView> {
               onPressed: () async {
                 final email = _email.text;
                 final password = _password.text;
+                if(email.isEmpty){
+                  await showErrorDialog(context, 'Email field cannot be empty.');
+                }
+                if(password.isEmpty){
+                await showErrorDialog(context, 'Password field cannot be empty.');}
+                else if(email.isEmpty && password.isEmpty){
+                  await showErrorDialog(context, 'Enter both the fields.');
+                }
                 await FirebaseAuth.instance.signOut();
                 try {
                   final userCredential = await FirebaseAuth.instance
@@ -104,10 +113,19 @@ class _LoginViewState extends State<LoginView> {
                 }
                 on FirebaseAuthException catch (e) {
                   if (e.code == 'user-not-found') {
-
+                    await showErrorDialog(context, 'User not found, please register first.');
+                    Navigator.of(context).pushNamedAndRemoveUntil(registerRoute, (route)=>false);
                   } else if (e.code == 'wrong-password') {
-
+                    await showErrorDialog(context, 'Wrong Password, please retry again.');
+                  }else if(e.code == 'network-request-failed'){
+                    await showErrorDialog(context, 'Network Request Failed please check your connection.');
+                  }else if(e.code == 'too-many-requests'){
+                    await showErrorDialog(context, 'Too many login attempts, please try again later.');
+                  }else if(e.code == 'invalid-email'){
+                    await showErrorDialog(context, 'Invalid email format, please check and type again.');
                   }
+                } catch(e){
+                  await showErrorDialog(context, 'An error occurred, ${e.toString()}');
                 }
               },
               text: 'Login',

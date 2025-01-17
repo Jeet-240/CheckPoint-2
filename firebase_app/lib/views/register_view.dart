@@ -1,4 +1,5 @@
 import 'package:firebase_app/constants/routes.dart';
+import 'package:firebase_app/widgets/custom_dialogbox.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_app/widgets/custom_button.dart';
@@ -90,6 +91,14 @@ class _RegisterViewState extends State<RegisterView> {
                 onPressed: () async {
                   final email = _email.text;
                   final password = _password.text;
+                  if(email.isEmpty){
+                    await showErrorDialog(context, 'Email field cannot be empty.');
+                  }
+                  if(password.isEmpty){
+                    await showErrorDialog(context, 'Password field cannot be empty.');}
+                  else if(email.isEmpty && password.isEmpty){
+                    await showErrorDialog(context, 'Enter both the fields.');
+                  }
                   try {
                     final userCredential = await FirebaseAuth.instance
                         .createUserWithEmailAndPassword(
@@ -99,10 +108,20 @@ class _RegisterViewState extends State<RegisterView> {
                     Navigator.of(context).pushNamedAndRemoveUntil(verifyRoute, (route)=>false);
                   } on FirebaseAuthException catch(e){
                     if(e.code == 'email-already-in-use'){
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                          loginRoute
-                          , (route) => false);
+                      await showErrorDialog(context, 'Email already in use, please sign in or user another email.');
+                    } else if (e.code == 'invalid-email') {
+                      await showErrorDialog(context, 'The email entered is invalid. Please enter a valid email address.');
+                    } else if (e.code == 'weak-password') {
+                      await showErrorDialog(context, 'The password is too weak. Please choose a stronger password.');
+                    } else if (e.code == 'operation-not-allowed') {
+                      await showErrorDialog(context, 'Creating accounts is currently not allowed. Contact support.');
+                    } else if (e.code == 'network-request-failed') {
+                      await showErrorDialog(context, 'Network error. Please check your internet connection.');
+                    } else {
+                      await showErrorDialog(context, 'An unknown error occurred: ${e.message}');
                     }
+                  } catch(e){
+                    await showErrorDialog(context, 'An error occurred, ${e.toString()}');
                   }
                 }
             ),
