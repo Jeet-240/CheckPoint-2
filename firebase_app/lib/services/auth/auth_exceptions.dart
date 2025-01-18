@@ -24,6 +24,16 @@ class InvalidAuthException implements Exception{
 
 
 
+class InvalidEmail implements Exception{
+
+}
+
+class NetworkRequestFailed implements Exception{
+
+}
+
+class TooManyRequest implements Exception{}
+
 
 
 class GenericAuthException implements Exception{

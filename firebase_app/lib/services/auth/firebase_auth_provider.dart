@@ -9,7 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart'
 
 class FirebaseAuthProvide implements AuthProvider{
   @override
-  Future<AuthUser> createUser ({required String email, required String password,}) async{
+  Future<AuthUser> createUser({required String email, required String password,}) async{
     try{
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: email,
@@ -25,12 +25,17 @@ class FirebaseAuthProvide implements AuthProvider{
       if (e.code == 'email-already-in-use') {
         throw EmailAlreadyInUseAuthException();
       } else if (e.code == 'invalid-email') {
-        throw InvalidAuthException();
+        throw InvalidEmail();
       } else if (e.code == 'weak-password') {
         throw WeakPasswordAuthException();
+      }else if(e.code == 'too-many-requests'){
+        throw TooManyRequest();
+      } else if(e.code == 'network-request-failed'){
+        throw NetworkRequestFailed();
       }
-    }
-      throw GenericAuthException();
+    }catch(e){
+      throw GenericAuthException();}
+    throw UserNotLoggedInAuthException();
 
   }
 
@@ -70,9 +75,15 @@ class FirebaseAuthProvide implements AuthProvider{
           throw WrongPasswordAuthException();
         }else if(e.code == 'invalid-email'){
           throw InvalidAuthException();
+        } else if(e.code == 'too-many-requests'){
+          throw TooManyRequest();
+        } else if(e.code == 'network-request-failed'){
+          throw NetworkRequestFailed();
         }
-      }
-        throw GenericAuthException();
+      }catch(e){
+        throw GenericAuthException();}
+
+      throw UserNotLoggedInAuthException();
 
   }
 

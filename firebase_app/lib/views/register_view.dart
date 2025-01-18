@@ -1,5 +1,6 @@
 import 'package:firebase_app/constants/routes.dart';
 import 'package:firebase_app/services/auth/auth_exceptions.dart';
+import 'package:firebase_app/services/auth/auth_service.dart';
 import 'package:firebase_app/widgets/custom_dialogbox.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_app/widgets/custom_button.dart';
@@ -100,8 +101,7 @@ class _RegisterViewState extends State<RegisterView> {
                     await showErrorDialog(context, 'Enter both the fields.');
                   }
                   try {
-                    final userCredential = await FirebaseAuth.instance
-                        .createUserWithEmailAndPassword(
+                    final userCredential = await AuthService.firebase().createUser(
                         email: email,
                         password: password
                     );
@@ -112,17 +112,14 @@ class _RegisterViewState extends State<RegisterView> {
                     await showErrorDialog(context, 'Email already in use, please sign in or user another email.');
                   } on InvalidAuthException{
                     await showErrorDialog(context, 'The email entered is invalid. Please enter a valid email address.');
-                  }
-                  on FirebaseAuthException catch(e){
-                     if (e.code == 'operation-not-allowed') {
-                      await showErrorDialog(context, 'Creating accounts is currently not allowed. Contact support.');
-                    } else if (e.code == 'network-request-failed') {
-                      await showErrorDialog(context, 'Network error. Please check your internet connection.');
-                    } else {
-                      await showErrorDialog(context, 'An error occurred: ${e.message}');
-                    }
-                  } on GenericAuthException{
-                    await showErrorDialog(context, 'An error occurred, please try again');
+                  }on TooManyRequest{
+                    await showErrorDialog(context, 'Too many login attempts, please try again later.');
+                  } on InvalidEmail{
+                    await showErrorDialog(context, 'Invalid email format, please check and type again.');
+                  } on NetworkRequestFailed{
+                    await showErrorDialog(context, 'Network Request Failed please check your connection.');
+                  }catch(e){
+                    await showErrorDialog(context, e.toString());
                   }
                 }
             ),

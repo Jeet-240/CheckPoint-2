@@ -115,15 +115,12 @@ class _LoginViewState extends State<LoginView> {
                   await showErrorDialog(context, 'Wrong Password, please retry again.');
                 } on GenericAuthException {
                   await showErrorDialog(context, 'An error occurred, please try again');
-                }
-                on FirebaseAuthException catch (e) {
-                  if(e.code == 'network-request-failed'){
-                    await showErrorDialog(context, 'Network Request Failed please check your connection.');
-                  }else if(e.code == 'too-many-requests'){
-                    await showErrorDialog(context, 'Too many login attempts, please try again later.');
-                  }else if(e.code == 'invalid-email'){
-                    await showErrorDialog(context, 'Invalid email format, please check and type again.');
-                  }
+                } on TooManyRequest{
+                  await showErrorDialog(context, 'Too many login attempts, please try again later.');
+                } on InvalidEmail{
+                  await showErrorDialog(context, 'Invalid email format, please check and type again.');
+                } on NetworkRequestFailed{
+                  await showErrorDialog(context, 'Network Request Failed please check your connection.');
                 }
               },
               text: 'Login',
