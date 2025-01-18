@@ -1,11 +1,11 @@
 import 'package:firebase_app/constants/routes.dart';
+import 'package:firebase_app/services/auth/auth_exceptions.dart';
 import 'package:firebase_app/widgets/custom_dialogbox.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_app/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
-import '../firebase_options.dart';
-import '../constants/routes.dart';
+
+
 
 
 
@@ -106,22 +106,23 @@ class _RegisterViewState extends State<RegisterView> {
                         password: password
                     );
                     Navigator.of(context).pushNamedAndRemoveUntil(verifyRoute, (route)=>false);
-                  } on FirebaseAuthException catch(e){
-                    if(e.code == 'email-already-in-use'){
-                      await showErrorDialog(context, 'Email already in use, please sign in or user another email.');
-                    } else if (e.code == 'invalid-email') {
-                      await showErrorDialog(context, 'The email entered is invalid. Please enter a valid email address.');
-                    } else if (e.code == 'weak-password') {
-                      await showErrorDialog(context, 'The password is too weak. Please choose a stronger password.');
-                    } else if (e.code == 'operation-not-allowed') {
+                  } on WeakPasswordAuthException {
+                    await showErrorDialog(context, 'The password is too weak. Please choose a stronger password.');
+                  } on EmailAlreadyInUseAuthException{
+                    await showErrorDialog(context, 'Email already in use, please sign in or user another email.');
+                  } on InvalidAuthException{
+                    await showErrorDialog(context, 'The email entered is invalid. Please enter a valid email address.');
+                  }
+                  on FirebaseAuthException catch(e){
+                     if (e.code == 'operation-not-allowed') {
                       await showErrorDialog(context, 'Creating accounts is currently not allowed. Contact support.');
                     } else if (e.code == 'network-request-failed') {
                       await showErrorDialog(context, 'Network error. Please check your internet connection.');
                     } else {
-                      await showErrorDialog(context, 'An unknown error occurred: ${e.message}');
+                      await showErrorDialog(context, 'An error occurred: ${e.message}');
                     }
-                  } catch(e){
-                    await showErrorDialog(context, 'An error occurred, ${e.toString()}');
+                  } on GenericAuthException{
+                    await showErrorDialog(context, 'An error occurred, please try again');
                   }
                 }
             ),

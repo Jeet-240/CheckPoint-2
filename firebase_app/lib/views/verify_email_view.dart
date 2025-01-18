@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_app/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_app/widgets/custom_button.dart';
 
@@ -35,10 +35,10 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
           ),
           CustomButton(
               onPressed: () async {
-                final user = FirebaseAuth.instance.currentUser;
-                final isUserVerified = user?.emailVerified ?? false;
+                final user = AuthService.firebase().currentUser;
+                final isUserVerified = user?.isEmailVerified ?? false;
                 if(!isUserVerified){
-                      await user?.sendEmailVerification();
+                      await AuthService.firebase().sendEmailVerification();
                       Navigator.of(context).pushNamedAndRemoveUntil(
                         '/login/',
                             (route)=>false,

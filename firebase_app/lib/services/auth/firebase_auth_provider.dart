@@ -1,3 +1,6 @@
+import 'package:firebase_app/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
+
 import 'auth_exceptions.dart';
 import 'auth_provider.dart';
 import 'auth_user.dart';
@@ -42,6 +45,8 @@ class FirebaseAuthProvide implements AuthProvider{
    }
   }
 
+
+
   @override
   Future<AuthUser> logIn({
     required String email,
@@ -61,15 +66,14 @@ class FirebaseAuthProvide implements AuthProvider{
       } on FirebaseAuthException catch(e){
         if (e.code == 'user-not-found') {
          throw UserNotFoundAuthException();
-          Navigator.of(context).pushNamedAndRemoveUntil(registerRoute, (route)=>false);
         } else if (e.code == 'wrong-password') {
           throw WrongPasswordAuthException();
         }else if(e.code == 'invalid-email'){
           throw InvalidAuthException();
         }
-      } catch(e){
-        throw GenericAuthException();
       }
+        throw GenericAuthException();
+
   }
 
   @override
@@ -88,8 +92,15 @@ class FirebaseAuthProvide implements AuthProvider{
     if(user!=null){
       await user.sendEmailVerification();
     }else{
-      throw UserNotLoggedInAuthException()l
+      throw UserNotLoggedInAuthException();
     }
+  }
+
+  @override
+  Future<void> initialize() async{
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   }
 
 }
