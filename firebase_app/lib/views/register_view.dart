@@ -2,12 +2,8 @@ import 'package:firebase_app/constants/routes.dart';
 import 'package:firebase_app/services/auth/auth_exceptions.dart';
 import 'package:firebase_app/services/auth/auth_service.dart';
 import 'package:firebase_app/widgets/custom_dialogbox.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_app/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
-
-
-
 
 
 

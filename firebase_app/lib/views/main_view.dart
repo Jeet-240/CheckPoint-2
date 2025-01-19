@@ -1,7 +1,13 @@
 import 'package:firebase_app/constants/routes.dart';
 import 'package:firebase_app/services/auth/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_app/enums/menu_action.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../services/auth/auth_exceptions.dart';
+
 
 
 class MainView extends StatelessWidget {
@@ -14,8 +20,8 @@ class MainView extends StatelessWidget {
         backgroundColor:Color.fromRGBO( 29, 22, 22  ,  1),
         appBar: AppBar(
           backgroundColor: Color.fromRGBO(142, 22, 22  ,  1),
-          title: const Text(
-              'Main Page',
+          title:  Text(
+              FirebaseAuth.instance.currentUser?.email ?? 'Hi',
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -29,8 +35,12 @@ class MainView extends StatelessWidget {
                       // TODO: Handle this case.
                       final shouldLogout = await showLogOutDialog(context);
                       if(shouldLogout){
+                        try{
+                        final prefs = await SharedPreferences.getInstance();
+                        prefs.setBool('isLoggedIn', false);
                         await AuthService.firebase().logOut();
                         Navigator.of(context).pushNamedAndRemoveUntil(loginRoute, (route)=>false);
+                        }
                       }break;
                   }
                 },
