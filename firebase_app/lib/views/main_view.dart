@@ -1,12 +1,11 @@
 import 'package:firebase_app/constants/routes.dart';
+import 'package:firebase_app/examples/write_examples.dart';
 import 'package:firebase_app/services/auth/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_app/enums/menu_action.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../services/auth/auth_exceptions.dart';
+import '../examples/read_examples.dart';
 
 
 
@@ -35,12 +34,10 @@ class MainView extends StatelessWidget {
                       // TODO: Handle this case.
                       final shouldLogout = await showLogOutDialog(context);
                       if(shouldLogout){
-                        try{
                         final prefs = await SharedPreferences.getInstance();
                         prefs.setBool('isLoggedIn', false);
                         await AuthService.firebase().logOut();
                         Navigator.of(context).pushNamedAndRemoveUntil(loginRoute, (route)=>false);
-                        }
                       }break;
                   }
                 },
@@ -56,7 +53,37 @@ class MainView extends StatelessWidget {
             )
           ],
         ),
-        body: Image.asset('assets/images/loggedin.png'),
+        body: Padding(
+            padding: EdgeInsets.all(12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text('Check out out example'),
+              SizedBox(
+                height: 6,
+                width: MediaQuery.of(context).size.width,
+              ),
+              ElevatedButton(
+                  onPressed: (){
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context)=> ReadExamples()
+                        ));
+                  },
+                child: Text('Read Example'),
+              ),
+              ElevatedButton(
+                onPressed: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context)=>WriteExamples()
+                    ));
+                }
+                , child: Text('Write Example'),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -1,5 +1,3 @@
-import "dart:ffi";
-
 import "package:firebase_app/services/auth/auth_exceptions.dart";
 import "package:firebase_app/services/auth/auth_provider.dart";
 import "package:firebase_app/services/auth/auth_user.dart";
@@ -83,6 +81,7 @@ class MockAuthProvider implements AuthProvider{
   Future<AuthUser> createUser({
     required String email,
     required String password,
+    required String username,
   }) async{
     // TODO: implement createUser
     if(!isInitialized) throw NotInitializedException();

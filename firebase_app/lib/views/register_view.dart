@@ -18,12 +18,14 @@ class _RegisterViewState extends State<RegisterView> {
 
   late final TextEditingController _email;
   late final TextEditingController _password;
+  late final TextEditingController _username;
 
   @override
   void initState() {
     // TODO: implement initState
     _email = TextEditingController();
     _password = TextEditingController();
+    _username = TextEditingController();
     super.initState();
   }
 
@@ -32,6 +34,7 @@ class _RegisterViewState extends State<RegisterView> {
     // TODO: implemenbot dispose
     _email.dispose();
     _password.dispose();
+    _username.dispose();
     super.dispose();
   }
 
@@ -60,12 +63,26 @@ class _RegisterViewState extends State<RegisterView> {
               enableSuggestions: false,
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
-                  hintText: 'Enter your email here',
+                hintText: 'Enter your email here',
+                hintStyle: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            TextField(
+              style: TextStyle(
+                color: Colors.white,
+              ),
+              controller: _username,
+              autocorrect: false,
+              enableSuggestions: false,
+              keyboardType: TextInputType.name,
+              decoration: const InputDecoration(
+                  hintText: 'Enter your username here',
                   hintStyle: TextStyle(
                     color: Colors.white,
                   ),
               ),
-
             ),
             TextField(
               style: TextStyle(
@@ -86,8 +103,9 @@ class _RegisterViewState extends State<RegisterView> {
             CustomButton(
                 text: 'Register',
                 onPressed: () async {
-                  final email = _email.text;
-                  final password = _password.text;
+                  final email = _email.text.trim();
+                  final password = _password.text.trim();
+                  final username = _username.text.trim();
                   if(email.isEmpty){
                     await showErrorDialog(context, 'Email field cannot be empty.');
                   }
@@ -99,7 +117,8 @@ class _RegisterViewState extends State<RegisterView> {
                   try {
                     final userCredential = await AuthService.firebase().createUser(
                         email: email,
-                        password: password
+                        password: password,
+                        username:  username,
                     );
                     Navigator.of(context).pushNamedAndRemoveUntil(verifyRoute, (route)=>false);
                   } on WeakPasswordAuthException {

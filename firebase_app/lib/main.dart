@@ -1,6 +1,7 @@
 import 'package:firebase_app/constants/key.dart';
+import 'package:firebase_app/firebase_options.dart';
 import 'package:firebase_app/services/auth/auth_service.dart';
-import 'package:firebase_app/services/auth/auth_user.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_app/views/main_view.dart';
 import 'package:firebase_app/views/verify_email_view.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,9 @@ import 'constants/routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MaterialApp(
     color: Color.fromRGBO(29, 22, 22, 1),
     home: HomePage(),
@@ -53,7 +57,7 @@ class _HomePageState extends State<HomePage> {
             {
               if(check){
                 return MainView();
-;              }else{
+              }else{
                 return LoginView();
               }
             }
